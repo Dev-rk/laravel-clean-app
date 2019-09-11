@@ -11,6 +11,10 @@
 |
 */
 
+use App\Http\Controllers\TestController;
+
 Route::get('/', function () {
     return view('welcome');
 });
+/** @see TestController::sayHello() */
+Route::get('/test', 'TestController@sayHello');
