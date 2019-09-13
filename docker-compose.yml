@@ -1,0 +1,30 @@
+version: "3"
+services:
+  laravel_clean_app:
+    container_name: laravel_clean_app
+    build:
+      context: ./
+    depends_on:
+      - mysql_database
+    environment:
+      COMPOSE_PROJECT_NAME: "laravel_clean_app"
+    expose:
+      - "80"
+      - "8080"
+    ports:
+      - "80:80"
+      - "8080:8080"
+
+  mysql_database:
+    container_name: mysql_database
+    command: --disable-partition-engine-check
+    image: mysql:5.7.27
+    expose:
+      - "3306"
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: "poc"
+      MYSQL_USER: "test"
+      MYSQL_PASSWORD: "test"
