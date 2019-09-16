@@ -2,4 +2,6 @@
 
 echo "inti script started..."
 
+pwd
+
 exec "$@"
