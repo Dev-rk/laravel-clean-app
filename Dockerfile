@@ -42,7 +42,6 @@ RUN mkdir -p /opt/service/var/cache
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN composer install
 RUN php artisan key:generate
-RUN ls
 
 USER root
 
