@@ -3,9 +3,9 @@ pipeline {
     stages {
         stage('Build and test') {
             steps {
+                sh 'pwd'
                 sh 'pwd | ls -la'
-                sh 'composer install'
-                sh '/opt/service/vendor/bin/phpunit'
+//                 sh '/opt/service/vendor/bin/phpunit'
             }
         }
 
