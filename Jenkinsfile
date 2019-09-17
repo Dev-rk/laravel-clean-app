@@ -5,6 +5,8 @@ pipeline {
             steps {
                 sh 'pwd'
                 sh 'pwd | ls -la'
+                sh 'composer install'
+                sh './vendor/bin/phpunit'
             }
         }
 
