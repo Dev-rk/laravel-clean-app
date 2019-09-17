@@ -5,7 +5,6 @@ pipeline {
             steps {
                 sh 'pwd'
                 sh 'pwd | ls -la'
-//                 sh '/opt/service/vendor/bin/phpunit'
             }
         }
 

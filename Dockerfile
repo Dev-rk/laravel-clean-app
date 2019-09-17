@@ -40,6 +40,7 @@ COPY --chown=www-data:www-data ./ /opt/service
 RUN rm -f /opt/service/src/log/*.log
 RUN mkdir -p /opt/service/var/cache
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+RUN composer install
 
 USER root
 
