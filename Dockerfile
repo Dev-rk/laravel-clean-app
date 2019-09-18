@@ -1,5 +1,7 @@
 FROM php:7.3-fpm
 
+LABEL maintainer = 'r.kapatsila@gmail.com'
+
 RUN apt-get update && apt-get install -y \
         unzip \
 		libzip-dev \
@@ -40,6 +42,7 @@ COPY --chown=www-data:www-data ./ /opt/service
 RUN rm -f /opt/service/src/log/*.log
 RUN mkdir -p /opt/service/var/cache
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+RUN cp ./.env.example ./.env
 RUN composer install
 RUN php artisan key:generate
 
