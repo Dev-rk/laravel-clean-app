@@ -5,31 +5,29 @@ pipeline {
         registry = 'testlaravelapp/laravel'
         registryCredential = 'dockerhub'
 
-        BRANCH_TO_BUILD = "${params.BRANCH_TO_BUILD}"
         BRANCH_NAME = "${GIT_BRANCH}"
+
+        tagName = BRANCH_NAME.substring(BRANCH_NAME.lastIndexOf('/') + 1, BRANCH_NAME.length())
         dockerImage = ''
     }
 
     stages {
         stage('Build Docker') {
           steps {
-                echo "${BRANCH_TO_BUILD}"
-                echo "${BRANCH_NAME}"
-                echo "${registry}:${BRANCH_NAME}"
+                echo "${tagName}"
+
                 script {
-                    dockerImage = docker.build registry + ":${BRANCH_NAME}"
+                    dockerImage = docker.build registry + ":${tagName}"
                 }
             }
         }
 
         stage('Run PHP tests') {
             steps {
-                echo "current build number: ${currentBuild.number}"
-                echo "previous build number: ${currentBuild.previousBuild.getNumber()}"
-                echo "${GIT_BRANCH}"
-
                 script {
                     dockerImage.inside {
+                        sh 'pwd'
+                        sh 'ls'
                         sh './vendor/bin/phpunit'
                     }
                 }
@@ -37,17 +35,29 @@ pipeline {
         }
 
         stage('Publish') {
-              when {
-                branch 'origin/master'
-              }
-
-              steps {
+            steps {
                 script {
+                    echo "docker.withRegistry"
                     docker.withRegistry('', registryCredential) {
-                    dockerImage.push()
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
+
+        stage('Publish latest') {
+            when {
+                environment name: 'tagName', value: 'master'
+            }
+
+            steps {
+                script {
+                    echo "docker.withRegistry"
+                    docker.withRegistry('', registryCredential) {
+                        dockerImage.push("latest")
                   }
                 }
-              }
-            }
+          }
+        }
     }
 }
