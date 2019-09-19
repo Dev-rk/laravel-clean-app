@@ -27,7 +27,7 @@ pipeline {
                 script {
                     dockerImage.inside {
                         sh 'pwd'
-                        sh 'ls'
+                        sh 'ls -la'
                         sh './vendor/bin/phpunit'
                     }
                 }
