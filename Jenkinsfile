@@ -17,20 +17,27 @@ pipeline {
                 echo "${tagName}"
 
                 script {
-                    dockerImage = docker.build registry + ":${tagName}"
+                    dockerImage = docker.build registry + ":${tagName}".inside {
+                        sh 'pwd'
+                        sh 'ls -la'
+                    }
                 }
+
             }
         }
 
         stage('Run PHP tests') {
             steps {
-                script {
-                    dockerImage.inside {
-                        sh 'pwd'
-                        sh 'ls -la'
-                        sh './vendor/bin/phpunit'
-                    }
+//                 script {
+                withDockerContainer(registry + ":${tagName}") {
+                    sh 'ls -la'
                 }
+//                     dockerImage.inside {
+//                         sh 'pwd'
+//                         sh 'ls -la'
+//                         sh './vendor/bin/phpunit'
+//                     }
+//                 }
             }
         }
 
@@ -38,9 +45,9 @@ pipeline {
             steps {
                 script {
                     echo "docker.withRegistry"
-                    docker.withRegistry('', registryCredential) {
-                        dockerImage.push()
-                    }
+//                     docker.withRegistry('', registryCredential) {
+//                         dockerImage.push()
+//                     }
                 }
             }
         }
@@ -53,9 +60,9 @@ pipeline {
             steps {
                 script {
                     echo "docker.withRegistry"
-                    docker.withRegistry('', registryCredential) {
-                        dockerImage.push("latest")
-                  }
+//                     docker.withRegistry('', registryCredential) {
+//                         dockerImage.push("latest")
+//                   }
                 }
           }
         }

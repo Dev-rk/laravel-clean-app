@@ -23,8 +23,7 @@ RUN echo 'umask 0000' >> /root/.bashrc
 
 # Nginx configuration
 COPY docker/nginx/server.conf /etc/nginx/sites-available/
-RUN ln -s /etc/nginx/sites-available/server.conf /etc/nginx/sites-enabled
-RUN rm /etc/nginx/sites-enabled/default
+RUN ln -s /etc/nginx/sites-available/server.conf /etc/nginx/sites-enabled && rm /etc/nginx/sites-enabled/default
 
 RUN mkdir -p /opt/service /var/www/.composer /var/www/.config;chown -R www-data:www-data /opt/service /var/www/.composer /var/www/.config
 
@@ -39,12 +38,10 @@ USER www-data
 WORKDIR /opt/service
 
 COPY --chown=www-data:www-data ./ /opt/service
-RUN rm -f /opt/service/src/log/*.log
-RUN mkdir -p /opt/service/var/cache
+RUN rm -f /opt/service/src/log/*.log && mkdir -p /opt/service/var/cache
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-RUN cp ./.env.example ./.env
-RUN composer install
-RUN php artisan key:generate
+COPY --chown=www-data:www-data ./.env.example ./.env
+RUN composer install && php artisan key:generate
 
 USER root
 
