@@ -15,12 +15,22 @@ pipeline {
         stage('Build Docker') {
           steps {
                 echo "${tagName}"
+                sh "echo 'hello' > test.txt"
 
                 script {
-                    dockerImage = docker.build registry + ":${tagName}".inside {
-                        sh 'pwd'
+                    dockerImage = docker.build(registry + ":${tagName}", " --no-cache .")
+                    dockerImage.inside {
                         sh 'ls -la'
                     }
+//                     dockerImage.run {
+//                         sh 'ls -la'
+//                     }
+
+//                     dockerImage.withRun {
+//                         sh 'ls -la'
+//                     }
+//                     sh 'docker ps -a'
+//                     sh 'docker images'
                 }
 
             }
@@ -28,43 +38,46 @@ pipeline {
 
         stage('Run PHP tests') {
             steps {
-//                 script {
-                withDockerContainer(registry + ":${tagName}") {
-                    sh 'ls -la'
-                }
+                script {
+//                     docker.image(registry + ":${tagName}").inside {
+                        sh 'ls -la'
+//                     }
+//                 withDockerContainer(registry + ":${tagName}") {
+//                     sh 'ls -la'
+//                 }
 //                     dockerImage.inside {
 //                         sh 'pwd'
 //                         sh 'ls -la'
 //                         sh './vendor/bin/phpunit'
 //                     }
-//                 }
+                }
             }
         }
 
-        stage('Publish') {
-            steps {
-                script {
-                    echo "docker.withRegistry"
+//         stage('Publish') {
+//             steps {
+//                 script {
+//                     echo "docker.withRegistry"
 //                     docker.withRegistry('', registryCredential) {
 //                         dockerImage.push()
 //                     }
-                }
-            }
-        }
-
-        stage('Publish latest') {
-            when {
-                environment name: 'tagName', value: 'master'
-            }
-
-            steps {
-                script {
-                    echo "docker.withRegistry"
+//                 }
+//             }
+//         }
+//
+//         stage('Publish latest') {
+//             when {
+//                 environment name: 'tagName', value: 'master'
+//             }
+//
+//             steps {
+//                 script {
+//                     echo "docker.withRegistry"
 //                     docker.withRegistry('', registryCredential) {
 //                         dockerImage.push("latest")
 //                   }
-                }
-          }
-        }
+//                 }
+//           }
+//         }
     }
 }
